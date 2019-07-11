@@ -1,29 +1,47 @@
 // AVL.cpp: определяет точку входа для консольного приложения.
-//
-
 #include "stdafx.h"
 #include <windows.h>
 #include <conio.h>
 //#include <stdio.h>
 
+//-----
+const int n = 4000; 
+//ZapDB *base[n];
 
-void Load(char *file);
-
-//Структура для записис БД
-struct ZapDB{
+struct ZapDB{	//Структура записи БД
 	char fio[32];	//символьный массив фио
 	unsigned short int otdel;	//16-pазpядное положительное число - № отдела
 	char dolzhn[22];	//символьный массив должность
 	char dr[8];	//символьный массив ДР дд-мм-гг
 };
-void PrintZapDB(ZapDB zap);
+struct node{	//Структура узла дерева
+	ZapDB* key;
+	char height;
+	node* left;
+	node* right;
+	node(ZapDB* k) {key=k, height=1; left=right=0;}
+} Tree = NULL;
 
-int _tmain(int argc, _TCHAR* argv[])
-{
+//node Tree=NULL;		//Указатель на вершину дерева
+
+//Объявления функций
+void PrintZapDB(ZapDB* zap);
+void Load(char* file);
+char Height(node* p);
+int BFactor(node* p);
+void HeightReload(node* p);
+node* Rotateleft(node* q);
+node* Rotateright(node* p);
+node* Balance(node* p);
+node* Insert(node* p, ZapDB* k);
+
+//-----MAIN---------------
+int _tmain(int argc, _TCHAR* argv[]){
 	system("CLS");
 	printf("   AVL-tree");
 	Load("BASE2.DAT");
-	//	PrintZapDB(zap);
+	printf("/nФИО № отдела Должность Дата рождения");
+//	PrintZapDB(zap);
 
 	_getch();
 	return 0;
@@ -41,18 +59,84 @@ void Load(char *file){
 		printf ("\nОшибка открытия файла %s \n", file);
 		return;
 	};
-	while(1){
+	fread(&zap, sizeof(ZapDB),1,f);
+	while(!feof(f)){
+		//вносим запись в структуру дерева
+		Insert(&Tree, &zap);
 		fread(&zap, sizeof(ZapDB),1,f);
-		if (feof(f))
-			break;
 		n++;
 	}
 	fclose(f);
 	printf("\nЗагружено записей n= %d", n);
-	PrintZapDB(zap);	//отладка
+	PrintZapDB(&zap);	//отладка
 }
 
 //Вывод сруктуры на экран
-void PrintZapDB(ZapDB zap){
-
+void PrintZapDB(ZapDB* zap){
+	printf("\n%s %d %s %s", zap->fio, zap->otdel, zap->dolzhn, zap->dr);
 }
+
+//Возвращает высоту дерева
+char Height(node* p){
+	return p ? p->height:0;
+}
+
+//Вычисляет баланс вершины
+int BFactor(node* p){
+	return Height(p->right) - Height(p->left);
+}
+
+//Корректирует высоту узла после корректировки
+void HeightReload(node* p){
+	char hl = Height(p->left);
+	char hr = Height(p->right);
+	p->height = (hl>hr ? hl:hr) + 1;
+}
+
+//Левый поворот
+node* Rotateleft(node* q){
+	node* p = q->right;
+	q->right = p->left;
+	p->left = q;
+	HeightReload(q);
+	HeightReload(p);
+	return p;
+}
+//Правый поворот
+node* Rotateright(node* p){
+	node* q = p->left;
+	p->left = q->right;
+	q->right = p;
+	HeightReload(p);
+	HeightReload(q);
+	return q;
+}
+//Балансировка (разница высот поддеревьев =2)
+node* Balance(node* p){
+	HeightReload(p);
+	if (BFactor(p)==2){
+		if (BFactor(p->right) < 0){
+			p->right = Rotateright(p->right);
+		}
+		return Rotateleft(p);
+	}
+	if (BFactor(p)==-2){
+		if (BFactor(p->left)>0){
+			p->left = Rotateleft(p->left);
+		}
+		return Rotateright(p);
+	}
+	return p; //выход без балансировки
+}
+
+//Вставка ключа k в дерево с корнем p
+node* Insert(node* p, ZapDB* z){
+	if (!p) return new node(z); //добавление узла в пустое дерево
+	if (z<p->key)
+		p->left = Insert(p->left, z);
+	else
+		p->right = Insert(p->right, z);
+	return Balance(p);
+}
+
+
