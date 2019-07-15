@@ -59,13 +59,21 @@ void Load(char *file){
 		printf ("\nè¨¡ª  ®âªàëâ¨ï ä ©«  %s \n", file);
 		return;
 	};
-	fread(&zap, sizeof(ZapDB),1,f);
+	while (1) {
+		fread(&zap, sizeof(ZapDB), 1, f);
+//		zap.dr[8] = '\0';
+		PrintZapDB(&zap);
+		if (feof(f))
+			break;
+		n++;
+	}
+	/*fread(&zap, sizeof(ZapDB),1,f);
 	while(!feof(f)){
 		//¢­®á¨¬ § ¯¨áì ¢ áâàãªâãàã ¤¥à¥¢ 
 		Insert(&Tree, &zap);
 		fread(&zap, sizeof(ZapDB),1,f);
 		n++;
-	}
+	}*/
 	fclose(f);
 	printf("\n‡ £àã¦¥­® § ¯¨á¥© n= %d", n);
 	PrintZapDB(&zap);	//®â« ¤ª 
@@ -74,7 +82,7 @@ void Load(char *file){
 //‚ë¢®¤ áàãªâãàë ­  íªà ­
 void PrintZapDB(ZapDB* zap){
 	if (zap != NULL) {
-		printf("\n%s %d %s %s\n", zap->fio, zap->otdel, zap->dolzhn, zap->dr);
+		printf("\n%.32s %-3d %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr+'\0');
 	}
 }
 
