@@ -20,12 +20,13 @@ struct node{	//Структура узла дерева
 	node* left;
 	node* right;
 	node(ZapDB* k) {key=k, height=1; left=right=0;}
-} Tree = NULL;
+} *Tree = NULL;
 
 //node Tree=NULL;		//Указатель на вершину дерева
 
 //Объявления функций
 void PrintZapDB(ZapDB* zap);
+void PrintTree(node* p);
 void Load(char* file);
 char Height(node* p);
 int BFactor(node* p);
@@ -41,8 +42,8 @@ int _tmain(int argc, _TCHAR* argv[]){
 	printf("   AVL-tree");
 	Load("BASE2.DAT");
 	printf("\nФИО № отдела Должность Дата рождения");
-	PrintZapDB(Tree.key);
-
+	//PrintTree(Tree);
+	PrintZapDB(Tree->key);
 	_getch();
 	return 0;
 }
@@ -59,9 +60,15 @@ void Load(char *file){
 		printf ("\nОшибка открытия файла %s \n", file);
 		return;
 	};
+	/*while (!feof(f)) {
+		fread(&zap, sizeof(ZapDB), 1, f);
+		//		zap.dr[8] = '\0';
+		PrintZapDB(&zap);
+		n++;
+	}*/
 	while (1) {
 		fread(&zap, sizeof(ZapDB), 1, f);
-//		zap.dr[8] = '\0';
+		Tree = Insert(Tree, &zap);
 		PrintZapDB(&zap);
 		if (feof(f))
 			break;
@@ -76,14 +83,23 @@ void Load(char *file){
 	}*/
 	fclose(f);
 	printf("\nЗагружено записей n= %d", n);
-	PrintZapDB(&zap);	//отладка
+	//PrintZapDB(&zap);	//отладка
 }
 
 //Вывод сруктуры на экран
 void PrintZapDB(ZapDB* zap){
 	if (zap != NULL) {
-		printf("\n%.32s %-3d %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr+'\0');
+		printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr+'\0');
 	}
+}
+
+//Вывод узлов дерева
+void PrintTree(node* p) {
+	if (!p)
+		return;
+	PrintZapDB(p->key);
+	PrintTree(p->left);
+	PrintTree(p->right);
 }
 
 //Возвращает высоту дерева
@@ -141,6 +157,8 @@ node* Balance(node* p){
 
 //Вставка ключа k в дерево с корнем p
 node* Insert(node* p, ZapDB* z){
+	if (z==NULL)
+		return NULL;
 	if (!p) return new node(z); //добавление узла в пустое дерево
 	if (z<p->key)
 		p->left = Insert(p->left, z);
