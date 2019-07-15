@@ -40,8 +40,8 @@ int _tmain(int argc, _TCHAR* argv[]){
 	system("CLS");
 	printf("   AVL-tree");
 	Load("BASE2.DAT");
-	printf("/nФИО № отдела Должность Дата рождения");
-//	PrintZapDB(zap);
+	printf("\nФИО № отдела Должность Дата рождения");
+	PrintZapDB(Tree.key);
 
 	_getch();
 	return 0;
@@ -73,7 +73,9 @@ void Load(char *file){
 
 //Вывод сруктуры на экран
 void PrintZapDB(ZapDB* zap){
-	printf("\n%s %d %s %s", zap->fio, zap->otdel, zap->dolzhn, zap->dr);
+	if (zap != NULL) {
+		printf("\n%s %d %s %s\n", zap->fio, zap->otdel, zap->dolzhn, zap->dr);
+	}
 }
 
 //Возвращает высоту дерева
