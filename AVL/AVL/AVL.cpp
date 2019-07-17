@@ -14,20 +14,20 @@ struct ZapDB{	//‘âàãªâãà  § ¯¨á¨ „
 	char dolzhn[22];	//á¨¬¢®«ì­ë© ¬ áá¨¢ ¤®«¦­®áâì
 	char dr[8];	//á¨¬¢®«ì­ë© ¬ áá¨¢ „ ¤¤-¬¬-££
 };
-struct node{	//‘âàãªâãà  ã§«  ¤¥à¥¢ 
+struct node {	//‘âàãªâãà  ã§«  ¤¥à¥¢ 
 	ZapDB* key;
 	char height;
 	node* left;
 	node* right;
-	node(ZapDB* k) {key=k, height=1; left=right=0;}
-} *Tree = NULL;
-
+	node(ZapDB* k) { key = k, height = 1; left = right = 0; }
+	//} *Tree = NULL;	//¤®¡ ¢¨âì ãª § â¥«ì ¢ main, ¢­¥áâ¨ ¥£® ª ª ¯ à ¬¥âà ¯à¨ ¢ë§®¢¥ äã­ªæ¨©
+};
 //node Tree=NULL;		//“ª § â¥«ì ­  ¢¥àè¨­ã ¤¥à¥¢ 
 
 //¡êï¢«¥­¨ï äã­ªæ¨©
 void PrintZapDB(ZapDB* zap);
 void PrintTree(node* p);
-void Load(char* file);
+node* Load(char* file);
 char Height(node* p);
 int BFactor(node* p);
 void HeightReload(node* p);
@@ -40,9 +40,11 @@ node* Insert(node* p, ZapDB* k);
 int _tmain(int argc, _TCHAR* argv[]){
 	system("CLS");
 	printf("   AVL-tree");
-	Load("BASE2.DAT");
+	node* Tree = NULL;
+	Tree = Load("BASE2.DAT");
 	printf("\n”ˆ ü ®â¤¥«  „®«¦­®áâì „ â  à®¦¤¥­¨ï");
 	//PrintTree(Tree);
+	//PrintZapDB((&Tree)->key);
 	PrintZapDB(Tree->key);
 	_getch();
 	return 0;
@@ -52,44 +54,36 @@ int _tmain(int argc, _TCHAR* argv[]){
 
 
 //§ £àã§ª  „
-void Load(char *file){
+node* Load(char *file){
 	int n=0;	//áç¥âç¨ª § ¯¨á¥©
 	FILE *f;
 	ZapDB zap;
+	node* p=NULL;
 	if ((f = fopen(file, "rb"))==NULL){
 		printf ("\nè¨¡ª  ®âªàëâ¨ï ä ©«  %s \n", file);
-		return;
+		return NULL;
 	};
-	/*while (!feof(f)) {
-		fread(&zap, sizeof(ZapDB), 1, f);
-		//		zap.dr[8] = '\0';
-		PrintZapDB(&zap);
-		n++;
-	}*/
 	while (1) {
 		fread(&zap, sizeof(ZapDB), 1, f);
-		Tree = Insert(Tree, &zap);
+		p = Insert(p, &zap);
 		PrintZapDB(&zap);
 		if (feof(f))
 			break;
 		n++;
+		break; //®â« ¤ª 
 	}
-	/*fread(&zap, sizeof(ZapDB),1,f);
-	while(!feof(f)){
-		//¢­®á¨¬ § ¯¨áì ¢ áâàãªâãàã ¤¥à¥¢ 
-		Insert(&Tree, &zap);
-		fread(&zap, sizeof(ZapDB),1,f);
-		n++;
-	}*/
 	fclose(f);
 	printf("\n‡ £àã¦¥­® § ¯¨á¥© n= %d", n);
 	//PrintZapDB(&zap);	//®â« ¤ª 
+	//free(zap); ®á¢®¡®¤¨âì ¯ ¬ïâì - ­ ¤® «¨?
+	return p;
 }
 
 //‚ë¢®¤ áàãªâãàë ­  íªà ­
 void PrintZapDB(ZapDB* zap){
 	if (zap != NULL) {
-		printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr+'\0');
+		//printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr+'\0'); ®â« ¤ª  - íâ® ¢¥à­ ï áâà®ª 
+		printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr);
 	}
 }
 
