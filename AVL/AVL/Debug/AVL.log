@@ -1,4 +1,5 @@
 ﻿  AVL.cpp
-c:\git\avl\avl\avl\avl.cpp(62): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\git\avl\avl\avl\avl.cpp(64): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\stdio.h(208): note:  см. объявление "fopen"
+c:\git\avl\avl\avl\avl.cpp(193): warning C4305: return: усечение из "int" в "bool"
   AVL.vcxproj -> C:\Git\AVL\AVL\Debug\AVL.exe

@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include <windows.h>
 #include <conio.h>
+#include <cstring>
 //#include <stdio.h>
 
 //-----
@@ -35,6 +36,7 @@ node* Rotateleft(node* q);
 node* Rotateright(node* p);
 node* Balance(node* p);
 node* Insert(node* p, ZapDB* k);
+bool IsGreater(ZapDB* a, ZapDB* b);
 
 //-----MAIN---------------
 int _tmain(int argc, _TCHAR* argv[]){
@@ -43,10 +45,11 @@ int _tmain(int argc, _TCHAR* argv[]){
 	node* Tree = NULL;
 	Tree = Load("BASE2.DAT");
 	printf("\nФИО № отдела Должность Дата рождения");
+	_getch();
 	//PrintTree(Tree);
 	//PrintZapDB((&Tree)->key);
-	PrintZapDB(Tree->key);
-	_getch();
+//	PrintZapDB(Tree->key);
+	system("PAUSE");
 	return 0;
 }
 
@@ -57,20 +60,22 @@ int _tmain(int argc, _TCHAR* argv[]){
 node* Load(char *file){
 	int n=0;	//счетчик записей
 	FILE *f;
-	ZapDB zap;
 	node* p=NULL;
 	if ((f = fopen(file, "rb"))==NULL){
 		printf ("\nОшибка открытия файла %s \n", file);
 		return NULL;
 	};
 	while (1) {
-		fread(&zap, sizeof(ZapDB), 1, f);
-		p = Insert(p, &zap);
-		PrintZapDB(&zap);
+		ZapDB* zap=new ZapDB;
+		fread(zap, sizeof(ZapDB), 1, f);
+		p = Insert(p, zap);
+//		PrintZapDB(zap);
+//		PrintZapDB(p->key);
 		if (feof(f))
 			break;
 		n++;
-		break; //отладка
+		/*if (n==5)	//отладка
+			break;*/ 
 	}
 	fclose(f);
 	printf("\nЗагружено записей n= %d", n);
@@ -82,18 +87,22 @@ node* Load(char *file){
 //Вывод сруктуры на экран
 void PrintZapDB(ZapDB* zap){
 	if (zap != NULL) {
-		//printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr+'\0'); отладка - это верная строка
+		//printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr+'\0'); отладка
 		printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr);
 	}
 }
 
 //Вывод узлов дерева
+//TODO Сделать вывод постранично (по 20? записей) с возможностью листать
 void PrintTree(node* p) {
-	if (!p)
+	if (!p) {
 		return;
-	PrintZapDB(p->key);
-	PrintTree(p->left);
-	PrintTree(p->right);
+	}
+	else {
+		PrintTree(p->left);
+		PrintZapDB(p->key);
+		PrintTree(p->right);
+	}
 }
 
 //Возвращает высоту дерева
@@ -154,11 +163,35 @@ node* Insert(node* p, ZapDB* z){
 	if (z==NULL)
 		return NULL;
 	if (!p) return new node(z); //добавление узла в пустое дерево
-	if (z<p->key)
-		p->left = Insert(p->left, z);
-	else
+	if (IsGreater(z, p->key))//(z<p->key)
 		p->right = Insert(p->right, z);
+	else
+		p->left = Insert(p->left, z);
 	return Balance(p);
 }
 
-
+//Сравнение записей
+//TODO Изменить порядок сравнение на: отдел, др, фио
+bool IsGreater(ZapDB* a, ZapDB* b) {
+	if (strcmp(a->fio, b->fio) > 0)
+		return 1;
+	else if (strcmp(a->fio, b->fio) < 0)
+		return 0;
+	else{	//фио равны, сравниваем по отделу
+		if (a->otdel > b->otdel)
+			return 1;
+		else if (a->otdel < b->otdel)
+			return 0;
+		else{	//фио, отдел равны, сравниваем по др
+			if (strcmp(a->dr, b->dr) > 0)
+				return 1;
+			else if (strcmp(a->dr, b->dr) < 0)
+				return 0;
+			else {
+				printf("Одинаковые записи в БД!");
+				//_getch();
+				return -1;
+			}
+		}
+	}
+}
