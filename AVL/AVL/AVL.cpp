@@ -1,10 +1,12 @@
+//TODO исправить ввод-вывод на с++ cin/cout вместо printf
+
 // AVL.cpp: определяет точку входа для консольного приложения.
 #include "stdafx.h"
 #include <windows.h>
 #include <conio.h>
 #include <cstring>
-//#include <stdio.h>
-
+#include <iostream>
+using namespace std;
 //-----
 const int n = 4000; 
 //ZapDB *base[n];
@@ -23,6 +25,11 @@ struct node {	//Структура узла дерева
 	node(ZapDB* k) { key = k, height = 1; left = right = 0; }
 	//} *Tree = NULL;	//добавить указатель в main, внести его как параметр при вызове функций
 };
+struct list {
+	ZapDB* key;
+	list* prev;
+	list* next;
+};
 //node Tree=NULL;		//Указатель на вершину дерева
 
 //Объявления функций
@@ -37,16 +44,27 @@ node* Rotateright(node* p);
 node* Balance(node* p);
 node* Insert(node* p, ZapDB* k);
 bool IsGreater(ZapDB* a, ZapDB* b);
+void Search(node* Tree, char str[32], int otd, list* Spisok);
 
 //-----MAIN---------------
 int _tmain(int argc, _TCHAR* argv[]){
 	system("CLS");
 	printf("   AVL-tree");
 	node* Tree = NULL;
+	list* Spisok = NULL;
+	char search_str[32];
+	int search_otd;
 	Tree = Load("BASE2.DAT");
-	printf("\nФИО № отдела Должность Дата рождения");
+	cout << "\nВведите ФИО сотрудника для поиска: " << endl;
+	cin >> search_str;
+	cout << "\nи номер отдела: " << endl;
+	cin >> search_otd;
+	cout << "Ищем ФИО " << search_str << " из отдела № " << search_otd << endl;
+	Search(Tree, search_str, search_otd, Spisok);
+	//TODO если вернет пустой список: спросить про новый поиск
+	//printf("\nФИО № отдела Должность Дата рождения");
 	_getch();
-	//PrintTree(Tree);
+	PrintTree(Tree);
 	//PrintZapDB((&Tree)->key);
 //	PrintZapDB(Tree->key);
 	system("PAUSE");
@@ -78,7 +96,7 @@ node* Load(char *file){
 			break;*/ 
 	}
 	fclose(f);
-	printf("\nЗагружено записей n= %d", n);
+	printf("\nЗагружено записей: %d", n);
 	//PrintZapDB(&zap);	//отладка
 	//free(zap); освободить память - надо ли?
 	return p;
@@ -171,21 +189,20 @@ node* Insert(node* p, ZapDB* z){
 }
 
 //Сравнение записей
-//TODO Изменить порядок сравнение на: отдел, др, фио
 bool IsGreater(ZapDB* a, ZapDB* b) {
-	if (strcmp(a->fio, b->fio) > 0)
+	if (a->otdel > b->otdel)
 		return 1;
-	else if (strcmp(a->fio, b->fio) < 0)
+	else if (a->otdel < b->otdel)
 		return 0;
-	else{	//фио равны, сравниваем по отделу
-		if (a->otdel > b->otdel)
+	else{
+		if (strcmp(a->dr, b->dr) > 0)
 			return 1;
-		else if (a->otdel < b->otdel)
+		else if (strcmp(a->dr, b->dr) < 0)
 			return 0;
-		else{	//фио, отдел равны, сравниваем по др
-			if (strcmp(a->dr, b->dr) > 0)
+		else{
+			if (strcmp(a->fio, b->fio) > 0)
 				return 1;
-			else if (strcmp(a->dr, b->dr) < 0)
+			else if (strcmp(a->fio, b->fio) < 0)
 				return 0;
 			else {
 				printf("Одинаковые записи в БД!");
@@ -195,3 +212,30 @@ bool IsGreater(ZapDB* a, ZapDB* b) {
 		}
 	}
 }
+
+//Формирование списка найденных людей:
+//input: указатель на дерево в кот-м ищем, искомая фамилия, номер отдела
+//output: добавляет в список сотрудников того же отдела, моложе искомого
+//при совпадении фамилии искомым выбираем с более ранней др
+void Search(node* Tree, char str[32], int otd, list* Spisok) {
+	if (!Tree)
+		return;
+	char dr[8] = FindDR(str, otd);
+	string dr_str = dr;
+	if (str == NULL || otd == NULL) {
+		cout << "Неверно введены данные для поиска" << endl;
+		return;
+	}
+	while (1) {
+		if (Tree->key->otdel == otd) {
+			if (сравнить др) ){
+
+				InsertToList(Tree->key, Spisok);
+			}
+		}
+		if (Tree->key->otdel > otd) {
+
+		}
+	}
+}
+

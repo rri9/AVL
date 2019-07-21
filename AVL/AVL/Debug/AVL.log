@@ -1,5 +1,15 @@
 ﻿  AVL.cpp
-c:\git\avl\avl\avl\avl.cpp(64): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\git\avl\avl\avl\avl.cpp(82): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\stdio.h(208): note:  см. объявление "fopen"
-c:\git\avl\avl\avl\avl.cpp(193): warning C4305: return: усечение из "int" в "bool"
-  AVL.vcxproj -> C:\Git\AVL\AVL\Debug\AVL.exe
+c:\git\avl\avl\avl\avl.cpp(210): warning C4305: return: усечение из "int" в "bool"
+c:\git\avl\avl\avl\avl.cpp(223): error C3861: FindDR: идентификатор не найден
+c:\git\avl\avl\avl\avl.cpp(231): error C3872: 0xa0: этот символ невозможно использовать в идентификаторе
+c:\git\avl\avl\avl\avl.cpp(231): error C3873: "0xa4": этот символ недопустим как первый символ идентификатора
+c:\git\avl\avl\avl\avl.cpp(231): error C2065: ба ў­Ёвм: необъявленный идентификатор
+c:\git\avl\avl\avl\avl.cpp(231): error C2146: синтаксическая ошибка: отсутствие ")" перед идентификатором "¤а"
+c:\git\avl\avl\avl\avl.cpp(231): error C2059: синтаксическая ошибка: )
+c:\git\avl\avl\avl\avl.cpp(231): error C2065: ¤а: необъявленный идентификатор
+c:\git\avl\avl\avl\avl.cpp(233): error C3861: InsertToList: идентификатор не найден
+c:\git\avl\avl\avl\avl.cpp(233): error C2059: синтаксическая ошибка: ;
+c:\git\avl\avl\avl\avl.cpp(240): error C2059: синтаксическая ошибка: }
+c:\git\avl\avl\avl\avl.cpp(240): error C2143: синтаксическая ошибка: отсутствие ";" перед "}"
