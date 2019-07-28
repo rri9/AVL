@@ -44,7 +44,12 @@ node* Rotateright(node* p);
 node* Balance(node* p);
 node* Insert(node* p, ZapDB* k);
 bool IsGreater(ZapDB* a, ZapDB* b);
-void Search(node* Tree, char str[32], int otd, list* Spisok);
+void Search(node* Tree, char str[], int otd, list* Spisok, list* head, list* tail);
+char* FindDR(node* Tree, char str[], int otd);
+char* GetFamily(char str[]);
+bool IsEarlier(char* tree_dr, char* dr);
+void InsertToList(ZapDB* key, list* Spisok, list* head, list* tail);
+void PrintList(list* Spisok, list* head, list* tail);
 
 //-----MAIN---------------
 int _tmain(int argc, _TCHAR* argv[]){
@@ -52,6 +57,8 @@ int _tmain(int argc, _TCHAR* argv[]){
 	printf("   AVL-tree");
 	node* Tree = NULL;
 	list* Spisok = NULL;
+	list* head = NULL;
+	list* tail = NULL;
 	char search_str[32];
 	int search_otd;
 	Tree = Load("BASE2.DAT");
@@ -60,13 +67,14 @@ int _tmain(int argc, _TCHAR* argv[]){
 	cout << "\nи номер отдела: " << endl;
 	cin >> search_otd;
 	cout << "Ищем ФИО " << search_str << " из отдела № " << search_otd << endl;
-	Search(Tree, search_str, search_otd, Spisok);
+	Search(Tree, search_str, search_otd, Spisok, head, tail);
 	//TODO если вернет пустой список: спросить про новый поиск
 	//printf("\nФИО № отдела Должность Дата рождения");
 	_getch();
-	PrintTree(Tree);
+	//PrintTree(Tree);
 	//PrintZapDB((&Tree)->key);
 //	PrintZapDB(Tree->key);
+
 	system("PAUSE");
 	return 0;
 }
@@ -215,27 +223,110 @@ bool IsGreater(ZapDB* a, ZapDB* b) {
 
 //Формирование списка найденных людей:
 //input: указатель на дерево в кот-м ищем, искомая фамилия, номер отдела
-//output: добавляет в список сотрудников того же отдела, моложе искомого
-//при совпадении фамилии искомым выбираем с более ранней др
-void Search(node* Tree, char str[32], int otd, list* Spisok) {
+//output: добавляет в список указатели на сотрудников того же отдела, моложе искомого
+//При совпадении фамилии искомым выбираем с более ранней др
+void Search(node* Tree, char str[], int otd, list* Spisok, list* head, list* tail) {
 	if (!Tree)
 		return;
-	char dr[8] = FindDR(str, otd);
-	string dr_str = dr;
+	char* dr = FindDR(Tree, str, otd);
 	if (str == NULL || otd == NULL) {
 		cout << "Неверно введены данные для поиска" << endl;
 		return;
 	}
-	while (1) {
-		if (Tree->key->otdel == otd) {
-			if (сравнить др) ){
-
-				InsertToList(Tree->key, Spisok);
-			}
-		}
+	while (!Tree) {
 		if (Tree->key->otdel > otd) {
-
+			break;
+		}
+		else if (Tree->key->otdel < otd) {
+			Tree = Tree->left;
+		}
+		if (Tree->key->otdel == otd) {
+			if (IsEarlier(Tree->key->dr, dr)){
+				InsertToList(Tree->key, Spisok, head, tail);
+			}
+			Tree = Tree->left;
 		}
 	}
 }
 
+//По ФИО и № отдела находим самую раннюю дату рождения сотрудника
+//    с данной фамилией из этого отдела
+//С учетом сортировки дерева по номеру отдела/д.р./фио
+//    если отдел в узле дерева больше искомого отдела, то весь отдел просмотрен
+char* FindDR(node* Tree, char str[], int otd) {
+	char res[8], *family;
+	family = GetFamily(str);
+	while (!Tree) {	//!Tree==NULL
+		if (Tree->key->otdel > otd) {
+			break;
+		}
+		else if (Tree->key->otdel < otd) {
+			Tree = Tree->left;
+		}
+		else if (Tree->key->otdel == otd) {
+			if (strcmp(GetFamily(Tree->key->fio), family)==0) {
+				strcpy(res, Tree->key->dr);
+				break;
+			}
+			Tree->left;
+		}
+	}
+
+	return res;
+}
+
+char* GetFamily(char str[]) {
+	char family[32];
+	for (int i = 0; i < 32; i++) {
+		if (str[i] == ' ') {
+			family[i] = '\0';
+			break;
+		}
+		else
+			family[i] = str[i];
+	}
+	return family;
+}
+
+//Возвращает true если дата рождения tree_dr меньше dr
+//формат записи dr дд-мм-гг
+//				   01 34 67
+bool IsEarlier(char* tree_dr, char* dr) {
+	if (tree_dr[6] > dr[6])
+		return 1;
+	else if (tree_dr[7] > dr[7])
+		return 1;
+	else if (tree_dr[3] > dr[3])
+		return 1;
+	else if (tree_dr[4] > dr[4])
+		return 1;
+	else if (tree_dr[0] > dr[0])
+		return 1;
+	else
+		return 0;
+}
+
+//
+void InsertToList(ZapDB* key, list* Spisok, list* head, list* tail) {
+	list* lst = new list;
+	lst->key = key;
+	lst->prev = NULL;
+	lst->next = NULL;
+	if (Spisok == NULL) {
+		Spisok = head = tail = lst;
+	}
+	else {
+		tail->next = lst;
+		lst->prev = tail;
+		tail = lst;
+	}
+}
+
+//
+void PrintList(list* Spisok, list* head, list* tail) {
+	list* current=Spisok;
+	while (!current->next) {
+		PrintZapDB(current->key);
+		current = current->next;
+	}
+}
