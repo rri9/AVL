@@ -1,9 +1,10 @@
 ﻿  AVL.cpp
-c:\git\avl\avl\avl\avl.cpp(90): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\git\avl\avl\avl\avl.cpp(94): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\stdio.h(208): note:  см. объявление "fopen"
-c:\git\avl\avl\avl\avl.cpp(218): warning C4305: return: усечение из "int" в "bool"
-c:\git\avl\avl\avl\avl.cpp(268): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\git\avl\avl\avl\avl.cpp(225): warning C4305: return: усечение из "int" в "bool"
+c:\git\avl\avl\avl\avl.cpp(278): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\string.h(133): note:  см. объявление "strcpy"
-c:\git\avl\avl\avl\avl.cpp(275): warning C4172: возвращение адреса локальной или временной переменной : res
-c:\git\avl\avl\avl\avl.cpp(288): warning C4172: возвращение адреса локальной или временной переменной : family
+c:\git\avl\avl\avl\avl.cpp(267): warning C4101: family: неиспользованная локальная переменная
+c:\git\avl\avl\avl\avl.cpp(285): warning C4172: возвращение адреса локальной или временной переменной : res
+c:\git\avl\avl\avl\avl.cpp(298): warning C4172: возвращение адреса локальной или временной переменной : family
   AVL.vcxproj -> C:\Git\AVL\AVL\Debug\AVL.exe

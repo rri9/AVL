@@ -1,6 +1,6 @@
-//TODO исправить ввод-вывод на с++ cin/cout вместо printf
+//TODO шёяЁртшЄ№ ттюф-т√тюф эр ё++ cin/cout тьхёЄю printf
 
-// AVL.cpp: определяет точку входа для консольного приложения.
+// AVL.cpp: юяЁхфхы хЄ Єюўъє тїюфр фы  ъюэёюы№эюую яЁшыюцхэш .
 #include "stdafx.h"
 #include <windows.h>
 #include <conio.h>
@@ -11,28 +11,28 @@ using namespace std;
 const int n = 4000; 
 //ZapDB *base[n];
 
-struct ZapDB{	//Структура записи БД
-	char fio[32];	//символьный массив фио
-	unsigned short int otdel;	//16-pазpядное положительное число - № отдела
-	char dolzhn[22];	//символьный массив должность
-	char dr[8];	//символьный массив ДР дд-мм-гг
+struct ZapDB{	//╤ЄЁєъЄєЁр чряшёш ┴─
+	char fio[32];	//ёшьтюы№э√щ ьрёёшт Їшю
+	unsigned short int otdel;	//16-pрчp фэюх яюыюцшЄхы№эюх ўшёыю - ╣ юЄфхыр
+	char dolzhn[22];	//ёшьтюы№э√щ ьрёёшт фюыцэюёЄ№
+	char dr[8];	//ёшьтюы№э√щ ьрёёшт ─╨ фф-ьь-уу
 };
-struct node {	//Структура узла дерева
+struct node {	//╤ЄЁєъЄєЁр єчыр фхЁхтр
 	ZapDB* key;
 	char height;
 	node* left;
 	node* right;
 	node(ZapDB* k) { key = k, height = 1; left = right = 0; }
-	//} *Tree = NULL;	//добавить указатель в main, внести его как параметр при вызове функций
+	//} *Tree = NULL;	//фюсртшЄ№ єърчрЄхы№ т main, тэхёЄш хую ъръ ярЁрьхЄЁ яЁш т√чютх ЇєэъЎшщ
 };
 struct list {
 	ZapDB* key;
 	list* prev;
 	list* next;
 };
-//node Tree=NULL;		//Указатель на вершину дерева
+//node Tree=NULL;		//╙ърчрЄхы№ эр тхЁ°шэє фхЁхтр
 
-//Объявления функций
+//╬с· тыхэш  ЇєэъЎшщ
 void PrintZapDB(ZapDB* zap);
 void PrintTree(node* p);
 node* Load(char* file);
@@ -61,15 +61,17 @@ int _tmain(int argc, _TCHAR* argv[]){
 	list* tail = NULL;
 	char search_str[32];
 	int search_otd;
-	Tree = Load("BASE2.DAT");
-	cout << "\nВведите ФИО сотрудника для поиска: " << endl;
+	Tree = Load("BASE2_lat.DAT");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	cout << "\n┬тхфшЄх ╘╚╬ ёюЄЁєфэшър фы  яюшёър: " << endl;
 	cin >> search_str;
-	cout << "\nи номер отдела: " << endl;
+	cout << "ш эюьхЁ юЄфхыр: " << endl;
 	cin >> search_otd;
-	cout << "Ищем ФИО " << search_str << " из отдела № " << search_otd << endl;
+	cout << "\n╚∙хь ╘╚╬ " << search_str << " шч юЄфхыр ╣ " << search_otd << endl;
 	Search(Tree, search_str, search_otd, Spisok, head, tail);
-	//TODO если вернет пустой список: спросить про новый поиск
-	//printf("\nФИО № отдела Должность Дата рождения");
+	//TODO хёыш тхЁэхЄ яєёЄющ ёяшёюъ: ёяЁюёшЄ№ яЁю эют√щ яюшёъ
+	//printf("\n╘╚╬ ╣ юЄфхыр ─юыцэюёЄ№ ─рЄр Ёюцфхэш ");
 	_getch();
 	//PrintTree(Tree);
 	//PrintZapDB((&Tree)->key);
@@ -82,13 +84,15 @@ int _tmain(int argc, _TCHAR* argv[]){
 
 
 
-//загрузка БД
+//чруЁєчър ┴─
 node* Load(char *file){
-	int n=0;	//счетчик записей
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	int n=0;	//ёўхЄўшъ чряшёхщ
 	FILE *f;
 	node* p=NULL;
 	if ((f = fopen(file, "rb"))==NULL){
-		printf ("\nОшибка открытия файла %s \n", file);
+		printf ("\n╬°шсър юЄъЁ√Єш  Їрщыр %s \n", file);
 		return NULL;
 	};
 	while (1) {
@@ -100,26 +104,26 @@ node* Load(char *file){
 		if (feof(f))
 			break;
 		n++;
-		/*if (n==5)	//отладка
+		/*if (n==5)	//юЄырфър
 			break;*/ 
 	}
 	fclose(f);
-	printf("\nЗагружено записей: %d", n);
-	//PrintZapDB(&zap);	//отладка
-	//free(zap); освободить память - надо ли?
+	printf("\n╟руЁєцхэю чряшёхщ: %d\n", n);
+	//PrintZapDB(&zap);	//юЄырфър
+	//free(zap); юётюсюфшЄ№ ярь Є№ - эрфю ыш?
 	return p;
 }
 
-//Вывод сруктуры на экран
+//┬√тюф ёЁєъЄєЁ√ эр ¤ъЁрэ
 void PrintZapDB(ZapDB* zap){
 	if (zap != NULL) {
-		//printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr+'\0'); отладка
+		//printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr+'\0'); юЄырфър
 		printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr);
 	}
 }
 
-//Вывод узлов дерева
-//TODO Сделать вывод постранично (по 20? записей) с возможностью листать
+//┬√тюф єчыют фхЁхтр
+//TODO ╤фхырЄ№ т√тюф яюёЄЁрэшўэю (яю 20? чряшёхщ) ё тючьюцэюёЄ№■ ышёЄрЄ№
 void PrintTree(node* p) {
 	if (!p) {
 		return;
@@ -131,24 +135,24 @@ void PrintTree(node* p) {
 	}
 }
 
-//Возвращает высоту дерева
+//┬ючтЁр∙рхЄ т√ёюЄє фхЁхтр
 char Height(node* p){
 	return p ? p->height:0;
 }
 
-//Вычисляет баланс вершины
+//┬√ўшёы хЄ срырэё тхЁ°шэ√
 int BFactor(node* p){
 	return Height(p->right) - Height(p->left);
 }
 
-//Корректирует высоту узла после корректировки
+//╩юЁЁхъЄшЁєхЄ т√ёюЄє єчыр яюёых ъюЁЁхъЄшЁютъш
 void HeightReload(node* p){
 	char hl = Height(p->left);
 	char hr = Height(p->right);
 	p->height = (hl>hr ? hl:hr) + 1;
 }
 
-//Левый поворот
+//╦хт√щ яютюЁюЄ
 node* Rotateleft(node* q){
 	node* p = q->right;
 	q->right = p->left;
@@ -157,7 +161,7 @@ node* Rotateleft(node* q){
 	HeightReload(p);
 	return p;
 }
-//Правый поворот
+//╧Ёрт√щ яютюЁюЄ
 node* Rotateright(node* p){
 	node* q = p->left;
 	p->left = q->right;
@@ -166,7 +170,7 @@ node* Rotateright(node* p){
 	HeightReload(q);
 	return q;
 }
-//Балансировка (разница высот поддеревьев =2)
+//┴рырэёшЁютър (ЁрчэшЎр т√ёюЄ яюффхЁхт№хт =2)
 node* Balance(node* p){
 	HeightReload(p);
 	if (BFactor(p)==2){
@@ -181,14 +185,14 @@ node* Balance(node* p){
 		}
 		return Rotateright(p);
 	}
-	return p; //выход без балансировки
+	return p; //т√їюф схч срырэёшЁютъш
 }
 
-//Вставка ключа k в дерево с корнем p
+//┬ёЄртър ъы■ўр k т фхЁхтю ё ъюЁэхь p
 node* Insert(node* p, ZapDB* z){
 	if (z==NULL)
 		return NULL;
-	if (!p) return new node(z); //добавление узла в пустое дерево
+	if (!p) return new node(z); //фюсртыхэшх єчыр т яєёЄюх фхЁхтю
 	if (IsGreater(z, p->key))//(z<p->key)
 		p->right = Insert(p->right, z);
 	else
@@ -196,8 +200,11 @@ node* Insert(node* p, ZapDB* z){
 	return Balance(p);
 }
 
-//Сравнение записей
+//╤Ёртэхэшх чряшёхщ
+//TODO ╚чьхэшЄ№ ёЁртэхэшх dr эр ёртэхэшх IsEarlier()
 bool IsGreater(ZapDB* a, ZapDB* b) {
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
 	if (a->otdel > b->otdel)
 		return 1;
 	else if (a->otdel < b->otdel)
@@ -213,7 +220,7 @@ bool IsGreater(ZapDB* a, ZapDB* b) {
 			else if (strcmp(a->fio, b->fio) < 0)
 				return 0;
 			else {
-				printf("Одинаковые записи в БД!");
+				printf("╬фшэръют√х чряшёш т ┴─!");
 				//_getch();
 				return -1;
 			}
@@ -221,24 +228,27 @@ bool IsGreater(ZapDB* a, ZapDB* b) {
 	}
 }
 
-//Формирование списка найденных людей:
-//input: указатель на дерево в кот-м ищем, искомая фамилия, номер отдела
-//output: добавляет в список указатели на сотрудников того же отдела, моложе искомого
-//При совпадении фамилии искомым выбираем с более ранней др
+//╘юЁьшЁютрэшх ёяшёър эрщфхээ√ї ы■фхщ:
+//input: єърчрЄхы№ эр фхЁхтю т ъюЄ-ь ш∙хь, шёъюьр  Їрьшыш , эюьхЁ юЄфхыр
+//output: фюсрты хЄ т ёяшёюъ єърчрЄхыш эр ёюЄЁєфэшъют Єюую цх юЄфхыр, ьюыюцх шёъюьюую
+//╧Ёш ёютярфхэшш Їрьшышш шёъюь√ь т√сшЁрхь ё сюыхх Ёрээхщ фЁ
 void Search(node* Tree, char str[], int otd, list* Spisok, list* head, list* tail) {
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
 	if (!Tree)
 		return;
 	char* dr = FindDR(Tree, str, otd);
 	if (str == NULL || otd == NULL) {
-		cout << "Неверно введены данные для поиска" << endl;
+		cout << "═хтхЁэю ттхфхэ√ фрээ√х фы  яюшёър" << endl;
 		return;
 	}
 	while (!Tree) {
 		if (Tree->key->otdel > otd) {
-			break;
+			Tree = Tree->left;
+			//break;
 		}
 		else if (Tree->key->otdel < otd) {
-			Tree = Tree->left;
+			Tree = Tree->right;
 		}
 		if (Tree->key->otdel == otd) {
 			if (IsEarlier(Tree->key->dr, dr)){
@@ -249,14 +259,14 @@ void Search(node* Tree, char str[], int otd, list* Spisok, list* head, list* tai
 	}
 }
 
-//По ФИО и № отдела находим самую раннюю дату рождения сотрудника
-//    с данной фамилией из этого отдела
-//С учетом сортировки дерева по номеру отдела/д.р./фио
-//    если отдел в узле дерева больше искомого отдела, то весь отдел просмотрен
+//╧ю ╘╚╬ ш ╣ юЄфхыр эрїюфшь ёрьє■ Ёрээ■■ фрЄє Ёюцфхэш  ёюЄЁєфэшър
+//    ё фрээющ Їрьшышхщ шч ¤Єюую юЄфхыр
+//╤ єўхЄюь ёюЁЄшЁютъш фхЁхтр яю эюьхЁє юЄфхыр/ф.Ё./Їшю
+//    хёыш юЄфхы т єчых фхЁхтр сюы№°х шёъюьюую юЄфхыр, Єю тхё№ юЄфхы яЁюёьюЄЁхэ
 char* FindDR(node* Tree, char str[], int otd) {
 	char res[8], *family;
-	family = GetFamily(str);
-	while (!Tree) {	//!Tree==NULL
+	//family = GetFamily(str);
+	while (Tree!=NULL) {	//!Tree==NULL
 		if (Tree->key->otdel > otd) {
 			break;
 		}
@@ -264,7 +274,7 @@ char* FindDR(node* Tree, char str[], int otd) {
 			Tree = Tree->left;
 		}
 		else if (Tree->key->otdel == otd) {
-			if (strcmp(GetFamily(Tree->key->fio), family)==0) {
+			if (strcmp(GetFamily(Tree->key->fio), str)==0) {
 				strcpy(res, Tree->key->dr);
 				break;
 			}
@@ -288,8 +298,8 @@ char* GetFamily(char str[]) {
 	return family;
 }
 
-//Возвращает true если дата рождения tree_dr меньше dr
-//формат записи dr дд-мм-гг
+//┬ючтЁр∙рхЄ true хёыш фрЄр Ёюцфхэш  tree_dr ьхэ№°х dr
+//ЇюЁьрЄ чряшёш dr фф-ьь-уу
 //				   01 34 67
 bool IsEarlier(char* tree_dr, char* dr) {
 	if (tree_dr[6] > dr[6])
