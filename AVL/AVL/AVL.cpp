@@ -50,6 +50,8 @@ char* GetFamily(char str[]);
 bool IsEarlier(char* tree_dr, char* dr);
 void InsertToList(ZapDB* key, list* Spisok, list* head, list* tail);
 void PrintList(list* Spisok, list* head, list* tail);
+void SearchRecursion(node* Tree, int otd, char* dr, list* Spisok, list* head, list* tail);
+void FindDRRecursion(node * Tree, int otd, char * str, char* res);
 
 //-----MAIN---------------
 int _tmain(int argc, _TCHAR* argv[]){
@@ -242,19 +244,23 @@ void Search(node* Tree, char str[], int otd, list* Spisok, list* head, list* tai
 		cout << "Неверно введены данные для поиска" << endl;
 		return;
 	}
-	while (!Tree) {
+	SearchRecursion(Tree, otd, dr, Spisok, head, tail);
+}
+
+void SearchRecursion(node* Tree, int otd, char* dr, list* Spisok, list* head, list* tail) {
+	while (Tree!=NULL) {
 		if (Tree->key->otdel > otd) {
-			Tree = Tree->left;
-			//break;
+			SearchRecursion(Tree->left, otd, dr, Spisok, head, tail);
 		}
 		else if (Tree->key->otdel < otd) {
-			Tree = Tree->right;
+			SearchRecursion(Tree->right, otd, dr, Spisok, head, tail);
 		}
 		if (Tree->key->otdel == otd) {
-			if (IsEarlier(Tree->key->dr, dr)){
+			if (IsEarlier(Tree->key->dr, dr)) {
 				InsertToList(Tree->key, Spisok, head, tail);
 			}
-			Tree = Tree->left;
+			SearchRecursion(Tree->left, otd, dr, Spisok, head, tail);
+			SearchRecursion(Tree->right, otd, dr, Spisok, head, tail);
 		}
 	}
 }
@@ -263,26 +269,33 @@ void Search(node* Tree, char str[], int otd, list* Spisok, list* head, list* tai
 //    с данной фамилией из этого отдела
 //С учетом сортировки дерева по номеру отдела/д.р./фио
 //    если отдел в узле дерева больше искомого отдела, то весь отдел просмотрен
+//TODO Изменить алгоритм обхода: сейчас просматриваем не все дерево, т.к.
+//		
 char* FindDR(node* Tree, char str[], int otd) {
-	char res[8], *family;
+	char res[8];
+	//char *family;
 	//family = GetFamily(str);
-	while (Tree!=NULL) {	//!Tree==NULL
-		if (Tree->key->otdel > otd) {
-			break;
+	FindDRRecursion(Tree, otd, str, res);
+	return res;
+}
+
+void FindDRRecursion(node* Tree, int otd, char * str, char* res){
+	while (Tree != NULL) {
+		if (Tree->key->otdel < otd) {
+			FindDRRecursion(Tree->right, otd, str, res);
 		}
-		else if (Tree->key->otdel < otd) {
-			Tree = Tree->left;
+		else if (Tree->key->otdel > otd) {
+			FindDRRecursion(Tree->left, otd, str, res);
 		}
 		else if (Tree->key->otdel == otd) {
-			if (strcmp(GetFamily(Tree->key->fio), str)==0) {
+			if (strcmp(GetFamily(Tree->key->fio), str) == 0) {
 				strcpy(res, Tree->key->dr);
 				break;
 			}
-			Tree->left;
+			FindDRRecursion(Tree->left, otd, str, res);
+			FindDRRecursion(Tree->right, otd, str, res);
 		}
 	}
-
-	return res;
 }
 
 char* GetFamily(char str[]) {
