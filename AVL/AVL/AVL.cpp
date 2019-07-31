@@ -51,7 +51,7 @@ bool IsEarlier(char* tree_dr, char* dr);
 void InsertToList(ZapDB* key, list* Spisok, list* head, list* tail);
 void PrintList(list* Spisok, list* head, list* tail);
 void SearchRecursion(node* Tree, int otd, char* dr, list* Spisok, list* head, list* tail);
-void FindDRRecursion(node * Tree, int otd, char * str, char* res);
+void FindDRRecursion(node * Tree, int otd, char * str, char* res, bool* found);
 
 //-----MAIN---------------
 int _tmain(int argc, _TCHAR* argv[]){
@@ -248,7 +248,7 @@ void Search(node* Tree, char str[], int otd, list* Spisok, list* head, list* tai
 }
 
 void SearchRecursion(node* Tree, int otd, char* dr, list* Spisok, list* head, list* tail) {
-	while (Tree!=NULL) {
+	if (Tree!=NULL) {
 		if (Tree->key->otdel > otd) {
 			SearchRecursion(Tree->left, otd, dr, Spisok, head, tail);
 		}
@@ -273,28 +273,26 @@ void SearchRecursion(node* Tree, int otd, char* dr, list* Spisok, list* head, li
 //		
 char* FindDR(node* Tree, char str[], int otd) {
 	char res[8];
+	bool found = 0;
 	//char *family;
 	//family = GetFamily(str);
-	FindDRRecursion(Tree, otd, str, res);
+	FindDRRecursion(Tree, otd, str, res, &found);
 	return res;
 }
 
-void FindDRRecursion(node* Tree, int otd, char * str, char* res){
-	while (Tree != NULL) {
-		if (Tree->key->otdel < otd) {
-			FindDRRecursion(Tree->right, otd, str, res);
-		}
-		else if (Tree->key->otdel > otd) {
-			FindDRRecursion(Tree->left, otd, str, res);
-		}
-		else if (Tree->key->otdel == otd) {
+//TODO Обход дерева не оптимален? - не факт, что первая встретившаяся фамилия
+//		будет с наименьшей датой рождения!?
+void FindDRRecursion(node* Tree, int otd, char * str, char* res, bool* found){
+	if (Tree != NULL & !found) {
+		if (Tree->key->otdel == otd) {
 			if (strcmp(GetFamily(Tree->key->fio), str) == 0) {
 				strcpy(res, Tree->key->dr);
-				break;
+				*found = true;
+				return;
 			}
-			FindDRRecursion(Tree->left, otd, str, res);
-			FindDRRecursion(Tree->right, otd, str, res);
 		}
+		FindDRRecursion(Tree->left, otd, str, res, found);
+		FindDRRecursion(Tree->right, otd, str, res, found);
 	}
 }
 
