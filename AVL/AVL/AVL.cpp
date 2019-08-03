@@ -6,6 +6,7 @@
 #include <conio.h>
 #include <cstring>
 #include <iostream>
+#include <iomanip>
 using namespace std;
 //-----
 const int n = 4000; 
@@ -34,7 +35,7 @@ struct list {
 
 //Объявления функций
 void PrintZapDB(ZapDB* zap);
-void PrintTree(node* p);
+void PrintTree(node* p, int level);
 node* Load(char* file);
 char Height(node* p);
 int BFactor(node* p);
@@ -45,7 +46,7 @@ node* Balance(node* p);
 node* Insert(node* p, ZapDB* k);
 bool IsGreater(ZapDB* a, ZapDB* b);
 void Search(node* Tree, char str[], int otd, list* Spisok, list* head, list* tail);
-char* FindDR(node* Tree, char str[], int otd);
+void FindDR(node* Tree, char str[], int otd, char dr[]);
 char* GetFamily(char str[]);
 bool IsEarlier(char* tree_dr, char* dr);
 void InsertToList(ZapDB* key, list* Spisok, list* head, list* tail);
@@ -56,7 +57,7 @@ void FindDRRecursion(node * Tree, int otd, char * str, char* res, bool* found);
 //-----MAIN---------------
 int _tmain(int argc, _TCHAR* argv[]){
 	system("CLS");
-	printf("   AVL-tree");
+	printf("   AVL-tree\n");
 	node* Tree = NULL;
 	list* Spisok = NULL;
 	list* head = NULL;
@@ -66,6 +67,7 @@ int _tmain(int argc, _TCHAR* argv[]){
 	Tree = Load("BASE2_lat.DAT");
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
+	PrintTree(Tree, 0);
 	cout << "\nВведите ФИО сотрудника для поиска: " << endl;
 	cin >> search_str;
 	cout << "и номер отдела: " << endl;
@@ -75,10 +77,10 @@ int _tmain(int argc, _TCHAR* argv[]){
 	//TODO если вернет пустой список: спросить про новый поиск
 	//printf("\nФИО № отдела Должность Дата рождения");
 	_getch();
-	//PrintTree(Tree);
+//	PrintTree(Tree, 0);
 	//PrintZapDB((&Tree)->key);
 //	PrintZapDB(Tree->key);
-
+	PrintList(Spisok, head, tail);
 	system("PAUSE");
 	return 0;
 }
@@ -92,24 +94,29 @@ node* Load(char *file){
 	SetConsoleOutputCP(1251);
 	int n=0;	//счетчик записей
 	FILE *f;
+	FILE *ff;	//отладка
 	node* p=NULL;
 	if ((f = fopen(file, "rb"))==NULL){
 		printf ("\nОшибка открытия файла %s \n", file);
 		return NULL;
 	};
+	ff = fopen("BASE2_short.DAT","w");	//отладка
 	while (1) {
 		ZapDB* zap=new ZapDB;
 		fread(zap, sizeof(ZapDB), 1, f);
+		if (n <= 20)	//отладка
+			fwrite(zap, sizeof(ZapDB), 1, ff);	//отладка
 		p = Insert(p, zap);
-//		PrintZapDB(zap);
-//		PrintZapDB(p->key);
+		//PrintZapDB(zap);
+		//PrintZapDB(p->key);
 		if (feof(f))
 			break;
 		n++;
-		/*if (n==5)	//отладка
-			break;*/ 
+		if (n==25)	//отладка
+			break;
 	}
 	fclose(f);
+	fclose(ff);	//отладка
 	printf("\nЗагружено записей: %d\n", n);
 	//PrintZapDB(&zap);	//отладка
 	//free(zap); освободить память - надо ли?
@@ -119,21 +126,37 @@ node* Load(char *file){
 //Вывод сруктуры на экран
 void PrintZapDB(ZapDB* zap){
 	if (zap != NULL) {
+		//cout << endl;
 		//printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr+'\0'); отладка
-		printf("\n%.32s %3u %.22s %.8s", zap->fio, zap->otdel, zap->dolzhn, zap->dr);
+		//printf("%.32s %3u %.22s %.9s\n", zap->fio, zap->otdel, zap->dolzhn, zap->dr);
+		//cout << setw(22) << zap->fio << setw(5) << zap->otdel << zap->dolzhn << zap->dr << endl;
+		for (int i = 0; i < 32; i++) {
+			cout << zap->fio[i];
+		}
+		cout << setw(5) << zap->otdel;
+		cout << " ";
+		for (int i = 0; i < 22; i++) {
+			cout << zap->dolzhn[i];
+		}
+		cout << " ";
+		for (int i = 0; i < 8; i++) {
+			cout << zap->dr[i];
+		}
+		cout << endl;
 	}
 }
 
 //Вывод узлов дерева
 //TODO Сделать вывод постранично (по 20? записей) с возможностью листать
-void PrintTree(node* p) {
+void PrintTree(node* p, int level) {
 	if (!p) {
 		return;
 	}
 	else {
-		PrintTree(p->left);
+		PrintTree(p->right, level + 1);	//PrintTree(p->left);
+		//for (int i = 0;i< level;i++) cout << "   ";	//отладка
 		PrintZapDB(p->key);
-		PrintTree(p->right);
+		PrintTree(p->left, level + 1);	//PrintTree(p->right);
 	}
 }
 
@@ -239,7 +262,8 @@ void Search(node* Tree, char str[], int otd, list* Spisok, list* head, list* tai
 	SetConsoleOutputCP(1251);
 	if (!Tree)
 		return;
-	char* dr = FindDR(Tree, str, otd);
+	char dr[] = "00-00-00";
+	FindDR(Tree, str, otd, dr);	//TODO char dr[8] ???
 	if (str == NULL || otd == NULL) {
 		cout << "Неверно введены данные для поиска" << endl;
 		return;
@@ -271,22 +295,27 @@ void SearchRecursion(node* Tree, int otd, char* dr, list* Spisok, list* head, li
 //    если отдел в узле дерева больше искомого отдела, то весь отдел просмотрен
 //TODO Изменить алгоритм обхода: сейчас просматриваем не все дерево, т.к.
 //		
-char* FindDR(node* Tree, char str[], int otd) {
-	char res[8];
+void FindDR(node* Tree, char str[], int otd, char dr[]) {
+	//char res[8];
+	//char res[] = {'0','0','-','0','0','-','0','0'};
+	//char res[] = "00-00-00";
 	bool found = 0;
-	//char *family;
+	//char *family;О
 	//family = GetFamily(str);
-	FindDRRecursion(Tree, otd, str, res, &found);
-	return res;
+	FindDRRecursion(Tree, otd, str, dr, &found);
+	//return res;
 }
 
 //TODO Обход дерева не оптимален? - не факт, что первая встретившаяся фамилия
 //		будет с наименьшей датой рождения!?
 void FindDRRecursion(node* Tree, int otd, char * str, char* res, bool* found){
-	if (Tree != NULL & !found) {
+	if (Tree != NULL & *found==false) {
 		if (Tree->key->otdel == otd) {
 			if (strcmp(GetFamily(Tree->key->fio), str) == 0) {
-				strcpy(res, Tree->key->dr);
+				//strcpy(res, Tree->key->dr);
+				for (int i = 0; i < 8; i++) {
+					res[i] = Tree->key->dr[i];
+				}
 				*found = true;
 				return;
 			}
@@ -345,6 +374,10 @@ void InsertToList(ZapDB* key, list* Spisok, list* head, list* tail) {
 
 //
 void PrintList(list* Spisok, list* head, list* tail) {
+	if (!Spisok) {
+		cout << "Записей не найдено!" << endl;
+		return;
+	}
 	list* current=Spisok;
 	while (!current->next) {
 		PrintZapDB(current->key);
